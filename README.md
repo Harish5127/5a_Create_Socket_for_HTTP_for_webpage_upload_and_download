@@ -59,8 +59,11 @@ while True:
 
 ```
 ## OUTPUT
-![alt text](<Screenshot 2026-03-16 180226.png>)
-![alt text](server.py.png)
+
+<img width="997" height="332" alt="image" src="https://github.com/user-attachments/assets/035a0730-9cce-4071-85d0-288d484493d7" />
+
+<img width="529" height="181" alt="image" src="https://github.com/user-attachments/assets/7b9d3c57-d115-4b8a-ab61-161c4eff3efd" />
+
 ## Result
 Thus the socket for HTTP for web page upload and download created and Executed
 
