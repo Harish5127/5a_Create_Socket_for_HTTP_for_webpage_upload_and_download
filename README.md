@@ -2,8 +2,7 @@
 ## AIM :
 To write a PYTHON program for socket for HTTP for web page upload and download
 ## Algorithm
-### Client Side (Browser-like)
-
+### Client Side 
 1.Start the program
 
 2.Create a socket using TCP
