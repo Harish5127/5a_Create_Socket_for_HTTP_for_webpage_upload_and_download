@@ -45,52 +45,82 @@ To write a PYTHON program for socket for HTTP for web page upload and download
 11.Stop the program
 
 ## Program 
-client
-```
+### client
+```python
 import socket
-s=socket.socket()
-s.connect(("localhost",8080))
-ch=input("1.Download 2.Upload : ")
-if ch=="1":
-    s.send("GET / HTTP/1.1\nHost: localhost\n\n".encode())
-    print(s.recv(4096).decode())
-else:
-    msg=input("Enter data to upload: ")
-    s.send(("POST / HTTP/1.1\nHost: localhost\n\n"+msg).encode())
-    print(s.recv(1024).decode())
-s.close()
-```
 
-server
+HOST = '127.0.0.1'
+PORT = 8080
+
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client_socket.connect((HOST, PORT))
+
+choice = input("Enter 1 for GET (Download), 2 for POST (Upload): ")
+
+if choice == "1":
+    request = "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n"
+elif choice == "2":
+    data = input("Enter data to upload: ")
+    request = f"POST / HTTP/1.1\r\nHost: localhost\r\nContent-Length: {len(data)}\r\n\r\n{data}"
+
+client_socket.send(request.encode())
+
+response = client_socket.recv(4096).decode()
+print("Response from server:\n", response)
+
+client_socket.close()
 ```
+### server
+```python
 import socket
-s=socket.socket()
-s.bind(("localhost",8080))
-s.listen(1)
-print("Server running...")
+
+HOST = '127.0.0.1'
+PORT = 8080
+
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_socket.bind((HOST, PORT))
+server_socket.listen(1)
+
+print("Server running at http://127.0.0.1:8080")
+
 while True:
-    c,addr=s.accept()
-    req=c.recv(1024).decode()
-    print("Request received")
-    if "GET" in req:
-        f=open("index.html","r")
-        res="HTTP/1.1 200 OK\n\n"+f.read()
-        f.close()
-        c.send(res.encode())
-    elif "POST" in req:
-        data=req.split("\n\n")[1]
-        f=open("upload.txt","w")
-        f.write(data)
-        f.close()
-        c.send("HTTP/1.1 200 OK\n\nFile Uploaded".encode())
-    c.close()
+    client_socket, addr = server_socket.accept()
+    print("Connected by", addr)
+
+    request = client_socket.recv(1024).decode()
+    print("Request:\n", request)
+
+    if "GET" in request:
+        try:
+            with open("index.html", "r") as file:
+                content = file.read()
+            response = "HTTP/1.1 200 OK\n\n" + content
+        except:
+            response = "HTTP/1.1 404 Not Found\n\nFile not found"
+
+        client_socket.sendall(response.encode())
+
+    elif "POST" in request:
+        data = request.split("\r\n\r\n")[1]
+        with open("uploaded.txt", "w") as file:
+            file.write(data)
+
+        response = "HTTP/1.1 200 OK\n\nData uploaded successfully"
+        client_socket.sendall(response.encode())
+
+    client_socket.close()
 
 ```
 ## OUTPUT
+### CLIENT:
 
-<img width="997" height="332" alt="image" src="https://github.com/user-attachments/assets/035a0730-9cce-4071-85d0-288d484493d7" />
+<img width="1204" height="347" alt="image" src="https://github.com/user-attachments/assets/e346b021-b8b2-422c-bb7f-b1ab52cf3611" />
 
-<img width="529" height="181" alt="image" src="https://github.com/user-attachments/assets/7b9d3c57-d115-4b8a-ab61-161c4eff3efd" />
+### SERVER:
+
+<img width="1214" height="141" alt="image" src="https://github.com/user-attachments/assets/2e7f1079-a4a9-49a1-b540-3618135f5239" />
+
+
 
 ## Result
 Thus the socket for HTTP for web page upload and download created and Executed
